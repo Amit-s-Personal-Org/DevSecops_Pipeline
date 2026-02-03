@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: petclinic
+  namespace: petapp
+  labels:
+    app: petclinic
+    tier: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: petclinic
+    tier: frontend

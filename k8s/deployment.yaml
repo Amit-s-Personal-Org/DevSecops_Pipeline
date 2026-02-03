@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic
+  namespace: petapp
+  labels:
+    app: petclinic
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: petclinic
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: petclinic
+        tier: frontend
+    spec:
+      containers:
+        - name: petclinic
+          image: amitu2021/petapp:d359bcd2be179c682b1647a9aa130e8760a001b8
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MYSQL_URL
+              value: "jdbc:mysql://petclinic-mysql:3306/petclinic"
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: MYSQL_PASSWORD
+          # Adding liveness and readiness probes for reliability
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 10
