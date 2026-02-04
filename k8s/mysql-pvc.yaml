@@ -7,6 +7,7 @@ metadata:
     app: petclinic
     tier: database
 spec:
+  storageClassName: gp2
   accessModes:
     - ReadWriteOnce
   resources:
